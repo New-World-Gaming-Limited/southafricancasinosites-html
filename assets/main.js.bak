@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─────────────────────────────────────────────
   (function initTheme() {
     const html       = document.documentElement;
-    const toggleBtn  = document.getElementById('theme-toggle');
+    const toggleBtn  = document.querySelector('.theme-toggle');
 
     const SUN_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -79,8 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // 2. MOBILE MENU
   // ─────────────────────────────────────────────
   (function initMobileMenu() {
-    const hamburger  = document.getElementById('hamburger');
-    const mobileNav  = document.querySelector('.mobile-nav');
+    const hamburger  = document.querySelector('.mobile-menu-btn');
+    const mobileNav  = document.querySelector('.main-nav');
     const body       = document.body;
 
     if (!hamburger || !mobileNav) return;
