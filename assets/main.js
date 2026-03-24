@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded',()=>{const _memStore={};const safeStorage={getItem:(k)=>{try{return safeStorage.getItem(k);}catch(e){return _memStore[k]||null;}},setItem:(k,v)=>{try{safeStorage.setItem(k,v);}catch(e){_memStore[k]=v;}},removeItem:(k)=>{try{safeStorage.removeItem(k);}catch(e){delete _memStore[k];}}};const safeSession={getItem:(k)=>{try{return safeSession.getItem(k);}catch(e){return _memStore['s_'+k]||null;}},setItem:(k,v)=>{try{safeSession.setItem(k,v);}catch(e){_memStore['s_'+k]=v;}},removeItem:(k)=>{try{safeSession.removeItem(k);}catch(e){delete _memStore['s_'+k];}}};(function initTheme(){const html=document.documentElement;const toggleBtn=document.querySelector('.theme-toggle');const SUN_ICON=`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+document.addEventListener('DOMContentLoaded',()=>{const _memStore={};const safeStorage={getItem:(k)=>{try{return localStorage.getItem(k);}catch(e){return _memStore[k]||null;}},setItem:(k,v)=>{try{localStorage.setItem(k,v);}catch(e){_memStore[k]=v;}},removeItem:(k)=>{try{localStorage.removeItem(k);}catch(e){delete _memStore[k];}}};const safeSession={getItem:(k)=>{try{return sessionStorage.getItem(k);}catch(e){return _memStore['s_'+k]||null;}},setItem:(k,v)=>{try{sessionStorage.setItem(k,v);}catch(e){_memStore['s_'+k]=v;}},removeItem:(k)=>{try{sessionStorage.removeItem(k);}catch(e){delete _memStore['s_'+k];}}};(function initTheme(){const html=document.documentElement;const toggleBtn=document.querySelector('.theme-toggle');const SUN_ICON=`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
         aria-hidden="true">
       <circle cx="12" cy="12" r="5"/>
@@ -32,31 +32,4 @@ if(dismissBtn){dismissBtn.addEventListener('click',()=>{bar.style.maxHeight=bar.
 return active;}
 function highlightToc(){const activeItem=getActiveSection();tocLinks.forEach((link)=>{link.classList.remove('toc-active');link.removeAttribute('aria-current');});if(activeItem){activeItem.link.classList.add('toc-active');activeItem.link.setAttribute('aria-current','true');}}
 window.addEventListener('scroll',highlightToc,{passive:true});highlightToc();})();(function initTableFilter(){const filterInputs=document.querySelectorAll('.table-filter, .casino-filter');filterInputs.forEach((input)=>{const targetSelector=input.getAttribute('data-target');const table=targetSelector?document.querySelector(targetSelector):input.closest('section, .filter-section')?.querySelector('table');if(!table)return;const tbody=table.querySelector('tbody');if(!tbody)return;const brandColIndex=parseInt(input.getAttribute('data-col')||'0',10);input.addEventListener('input',()=>{const query=input.value.trim().toLowerCase();const rows=tbody.querySelectorAll('tr');let visibleCount=0;rows.forEach((row)=>{const cell=row.querySelectorAll('td')[brandColIndex];const text=cell?cell.textContent.toLowerCase():'';const match=!query||text.includes(query);row.style.display=match?'':'none';if(match)visibleCount++;});let emptyMsg=table.parentElement.querySelector('.table-empty-msg');if(!emptyMsg){emptyMsg=document.createElement('p');emptyMsg.className='table-empty-msg';emptyMsg.textContent='No casinos match your search.';emptyMsg.style.cssText='display:none; text-align:center; padding:1rem; color:var(--color-muted, #888);';table.parentElement.appendChild(emptyMsg);}
-emptyMsg.style.display=visibleCount===0?'block':'none';});});})();(function initRatingAnimation(){const ratingBars=document.querySelectorAll('.rating-bar, .score-bar');if(!ratingBars.length)return;if('IntersectionObserver'in window){const observer=new IntersectionObserver((entries,obs)=>{entries.forEach((entry)=>{if(!entry.isIntersecting)return;const bar=entry.target;let percent;if(bar.hasAttribute('data-percent')){percent=parseFloat(bar.getAttribute('data-percent'));}else if(bar.hasAttribute('data-score')){percent=(parseFloat(bar.getAttribute('data-score'))/10)*100;}else{return;}
-percent=Math.min(100,Math.max(0,percent));const fill=bar.querySelector('.rating-fill, .score-fill, .bar-fill')||bar;fill.style.width='0%';fill.style.transition='width 0.8s cubic-bezier(0.4, 0, 0.2, 1)';requestAnimationFrame(()=>{requestAnimationFrame(()=>{fill.style.width=percent+'%';});});obs.unobserve(bar);});},{threshold:0.2});ratingBars.forEach((bar)=>observer.observe(bar));}else{ratingBars.forEach((bar)=>{const fill=bar.querySelector('.rating-fill, .score-fill, .bar-fill')||bar;let percent;if(bar.hasAttribute('data-percent')){percent=parseFloat(bar.getAttribute('data-percent'));}else if(bar.hasAttribute('data-score')){percent=(parseFloat(bar.getAttribute('data-score'))/10)*100;}
-if(percent!==undefined)fill.style.width=percent+'%';});}})();(function initCookieConsent(){const STORAGE_KEY='cookieConsent';const existing=safeStorage.getItem(STORAGE_KEY);if(existing==='accepted'||existing==='declined')return;const banner=document.createElement('div');banner.className='cookie-banner';banner.id='cookie-banner';banner.setAttribute('role','dialog');banner.setAttribute('aria-label','Cookie consent');banner.setAttribute('aria-live','polite');banner.innerHTML=`
-      <div class="cookie-banner__content">
-        <p class="cookie-banner__text">
-          We use cookies to improve your experience and analyse site traffic.
-          By clicking "Accept", you consent to our use of cookies.
-          <a href="/privacy-policy.html" class="cookie-banner__link">Learn more</a>.
-        </p>
-        <div class="cookie-banner__actions">
-          <button class="cookie-btn cookie-btn--decline" id="cookie-decline">Decline</button>
-          <button class="cookie-btn cookie-btn--accept" id="cookie-accept">Accept</button>
-        </div>
-      </div>
-    `;banner.style.cssText=`
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 9999;
-      background: var(--color-surface, #1e1e1e);
-      color: var(--color-text, #f0f0f0);
-      border-top: 1px solid var(--color-border, #333);
-      padding: 1rem 1.5rem;
-      box-shadow: 0 -2px 12px rgba(0,0,0,0.15);
-      font-size: 0.875rem;
-    `;document.body.appendChild(banner);function dismissBanner(choice){safeStorage.setItem(STORAGE_KEY,choice);banner.style.transition='transform 0.3s ease, opacity 0.3s ease';banner.style.transform='translateY(100%)';banner.style.opacity='0';banner.addEventListener('transitionend',()=>banner.remove(),{once:true});}
-document.getElementById('cookie-accept').addEventListener('click',()=>dismissBanner('accepted'));document.getElementById('cookie-decline').addEventListener('click',()=>dismissBanner('declined'));banner.addEventListener('keydown',(e)=>{if(e.key==='Escape')dismissBanner('declined');});setTimeout(()=>{const acceptBtn=document.getElementById('cookie-accept');if(acceptBtn)acceptBtn.focus();},300);})();});
+emptyMsg.style.display=visibleCount===0?'block':'none';});});})();});
